@@ -33,7 +33,14 @@ export const serverEnv = {
   chatModel: () => optional("OPENAI_CHAT_MODEL", "gpt-4o"),
   embeddingModel: () => optional("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small"),
   coursesCsvPath: () => optional("COURSES_CSV_PATH", "../vizura_courses_150.csv"),
+  /** The single Google account allowed to use the app (owner-only access). */
+  ownerEmail: () => required("OWNER_EMAIL").toLowerCase(),
 };
+
+/** Case-insensitive check that an email is the configured owner. */
+export function isOwnerEmail(email: string | null | undefined): boolean {
+  return !!email && email.toLowerCase() === serverEnv.ownerEmail();
+}
 
 /** Embedding dimensionality for text-embedding-3-small. Must match the SQL schema. */
 export const EMBEDDING_DIMENSIONS = 1536;

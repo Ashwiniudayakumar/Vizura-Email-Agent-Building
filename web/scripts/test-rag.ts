@@ -5,7 +5,8 @@
  *   npm run test:rag -- "self-paced power bi course for beginners"
  */
 import { config } from "dotenv";
-config({ path: ".env.local" });
+// override: project .env.local wins over any pre-existing shell env vars.
+config({ path: ".env.local", override: true });
 
 import { createClient } from "@supabase/supabase-js";
 import { serverEnv, supabasePublic } from "../src/lib/env";

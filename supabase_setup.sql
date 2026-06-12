@@ -1,5 +1,8 @@
--- Phase 1: Knowledge base + RAG schema
--- Run this in the Supabase SQL editor (or via the Supabase CLI) before ingesting.
+-- ============================================================================
+-- Vizura Email Agent — Phase 1 schema (knowledge base + RAG)
+-- Run this whole file in the Supabase SQL Editor (Dashboard → SQL Editor →
+-- New query → paste → Run). Safe to re-run.
+-- ============================================================================
 
 -- pgvector for embeddings.
 create extension if not exists vector;
@@ -90,7 +93,7 @@ $$;
 -- Allow read to everyone (anon + authenticated); writes happen only via the
 -- service-role key (which bypasses RLS), used by the ingestion script.
 -- ---------------------------------------------------------------------------
-alter table public.courses          enable row level security;
+alter table public.courses           enable row level security;
 alter table public.course_embeddings enable row level security;
 
 drop policy if exists "courses are readable by everyone" on public.courses;
@@ -102,3 +105,7 @@ drop policy if exists "course embeddings are readable by everyone" on public.cou
 create policy "course embeddings are readable by everyone"
   on public.course_embeddings for select
   using (true);
+
+-- ============================================================================
+-- Done. Next: from the web/ folder run `npm run ingest` then `npm run test:rag`.
+-- ============================================================================

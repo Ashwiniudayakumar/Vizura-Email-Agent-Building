@@ -45,6 +45,33 @@ spec and [`INITIAL.md`](../INITIAL.md) for the original requirements.
    ```
    You should see the 5 most relevant courses with similarity scores.
 
+## Auth — Google login, owner-only (Phase 2)
+
+Authentication uses **Supabase Auth with the Google provider**. Only the single
+account in `OWNER_EMAIL` may sign in; any other Google account is rejected and
+signed out. Session handling and route gating live in `src/proxy.ts` (Next.js 16's
+renamed Middleware).
+
+**One-time setup:**
+
+1. **Google Cloud Console** → APIs & Services → Credentials → create an
+   **OAuth 2.0 Client ID** (type: Web application):
+   - Authorized redirect URI:
+     `https://<your-project-ref>.supabase.co/auth/v1/callback`
+   - Authorized JavaScript origin: `http://localhost:3000`
+   - Copy the **Client ID** and **Client Secret**.
+2. **Supabase** → Authentication → **Providers → Google**: enable it, paste the
+   Client ID + Secret, save.
+3. **Supabase** → Authentication → **URL Configuration**:
+   - Site URL: `http://localhost:3000`
+   - Redirect URLs: add `http://localhost:3000/auth/callback`
+     (add your Vercel URL too when you deploy).
+4. Set `OWNER_EMAIL` in `.env.local` to the Google account you'll sign in with.
+
+Then `npm run dev`, open `http://localhost:3000`, and you'll be redirected to
+`/login`. Sign in with the owner account → you land on the dashboard. Any other
+account is bounced with an "isn't authorized" message.
+
 ## App
 
 ```bash
@@ -52,6 +79,3 @@ npm run dev      # http://localhost:3000
 npm run build    # production build
 npm run lint     # eslint
 ```
-
-The default landing page is still the Next.js starter — the agent UI arrives in the
-review/send phase.

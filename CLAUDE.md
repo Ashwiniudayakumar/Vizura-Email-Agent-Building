@@ -70,12 +70,19 @@ ContextEng/
     ├── scripts/
     │   ├── ingest-courses.ts # CSV → embeddings → Supabase (npm run ingest)
     │   └── test-rag.ts       # verify retrieval (npm run test:rag -- "query")
-    └── src/lib/
-        ├── env.ts            # centralised, validated env access
-        ├── openai.ts         # shared OpenAI client (server-only)
-        ├── supabase/         # admin.ts (service-role); server/browser clients land in Phase 2
-        └── rag/              # courseText, embeddings, retrieve
+    ├── src/proxy.ts          # Next 16 "Proxy" (renamed Middleware): session + owner gate
+    └── src/
+        ├── app/login, app/auth/callback   # Google login + OAuth callback (Phase 2)
+        └── lib/
+            ├── env.ts        # centralised, validated env access (incl. OWNER_EMAIL)
+            ├── openai.ts     # shared OpenAI client (server-only)
+            ├── auth.ts       # DAL: getCurrentUser / requireOwner (owner-only)
+            ├── supabase/     # admin (service-role), server, browser clients
+            └── rag/          # courseText, embeddings, retrieve
 ```
+
+> **Next.js 16 conventions in use:** Middleware is now `proxy.ts` (exported `proxy`,
+> Node runtime); `cookies()` and page `searchParams` are **async** (`await` them).
 
 > The GitHub repo is "Vizura-Email-Agent-Building". A nested clone folder of the same
 > name may exist locally for verification and is git-ignored — do not commit it.
