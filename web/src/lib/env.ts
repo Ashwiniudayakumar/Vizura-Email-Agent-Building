@@ -20,10 +20,31 @@ function optional(name: string, fallback: string): string {
   return value && value.length > 0 ? value : fallback;
 }
 
-/** Public Supabase config — safe to use in the browser (guarded by RLS). */
+function requireValue(value: string | undefined, name: string): string {
+  if (!value || value.length === 0) {
+    throw new Error(
+      `Missing required environment variable: ${name}. ` +
+        `Copy .env.example to .env.local and fill it in.`,
+    );
+  }
+  return value;
+}
+
+/**
+ * Public Supabase config — safe to use in the browser (guarded by RLS).
+ *
+ * IMPORTANT: read each NEXT_PUBLIC_* var by its *literal* name so Next.js can
+ * inline it into the client bundle at build time. Dynamic access
+ * (`process.env[name]`) is NOT inlined and will be undefined in the browser.
+ */
 export const supabasePublic = {
-  url: () => required("NEXT_PUBLIC_SUPABASE_URL"),
-  anonKey: () => required("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
+  url: () =>
+    requireValue(process.env.NEXT_PUBLIC_SUPABASE_URL, "NEXT_PUBLIC_SUPABASE_URL"),
+  anonKey: () =>
+    requireValue(
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    ),
 };
 
 /** Server-only secrets. Never import these into client components. */
