@@ -61,15 +61,28 @@ ContextEng/
 ├── CLAUDE.md                 # This file
 ├── INITIAL.md                # Original product requirements (source of truth)
 ├── vizura_courses_150.csv    # Course knowledge base (seed data for RAG) — 150 rows
-└── .gitignore
+├── .gitignore
+└── web/                      # Next.js 16 app (App Router, TS, Tailwind) — the product
+    ├── .env.example          # Required env vars (copy to .env.local)
+    ├── AGENTS.md             # ⚠ Next.js 16 has breaking changes — read its docs first
+    ├── supabase/migrations/  # SQL schema (run in Supabase before ingesting)
+    │   └── 0001_init.sql     #   courses + course_embeddings (pgvector) + match_courses
+    ├── scripts/
+    │   ├── ingest-courses.ts # CSV → embeddings → Supabase (npm run ingest)
+    │   └── test-rag.ts       # verify retrieval (npm run test:rag -- "query")
+    └── src/lib/
+        ├── env.ts            # centralised, validated env access
+        ├── openai.ts         # shared OpenAI client (server-only)
+        ├── supabase/         # admin.ts (service-role); server/browser clients land in Phase 2
+        └── rag/              # courseText, embeddings, retrieve
 ```
 
 > The GitHub repo is "Vizura-Email-Agent-Building". A nested clone folder of the same
 > name may exist locally for verification and is git-ignored — do not commit it.
 
-Application code does not exist yet; it will be created during the phased build. Keep
-the structure clean and document new top-level directories here as they are added
-(e.g. `frontend/`, `backend/`, `supabase/`, `scripts/`).
+> **Next.js 16 caveat:** this is a major version with breaking changes vs. older docs.
+> Before writing any Next-specific code (routes, server components, auth), read the
+> relevant guide under `web/node_modules/next/dist/docs/` — see `web/AGENTS.md`.
 
 ---
 
